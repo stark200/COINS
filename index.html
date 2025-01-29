@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Резиновые Мем-Коины</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: rgb(0, 0, 0);
+        }
+
+        #flash {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #main-content {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            color: black;
+            text-align: center;
+            font-size: 24px;
+            padding: 50px;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="crypto-bounce"></canvas>
+<div id="flash"></div>
+<div id="main-content">
+    <h1>Добро пожаловать на сайт!</h1>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script>
+    const { Engine, Render, Runner, Bodies, Composite, Events } = Matter;
+
+    // Физический движок
+    let engine = Engine.create();
+    let world = engine.world;
+
+    // Рендер
+    let render = Render.create({
+        element: document.body,
+        canvas: document.getElementById("crypto-bounce"),
+        engine: engine,
+        options: {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            wireframes: false,
+            background: 'black'
+        }
+    });
+
+    Render.run(render);
+    let runner = Runner.create();
+    Runner.run(runner, engine);
+
+    // Границы экрана
+    let ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight + 50, window.innerWidth, 100, { isStatic: true });
+    let leftWall = Bodies.rectangle(-50, window.innerHeight / 2, 100, window.innerHeight, { isStatic: true });
+    let rightWall = Bodies.rectangle(window.innerWidth + 50, window.innerHeight / 2, 100, window.innerHeight, { isStatic: true });
+
+    Composite.add(world, [ground, leftWall, rightWall]);
+
+    // Мем-коины
+    const coinTextures = [
+        "https://seeklogo.com/images/D/dogecoin-doge-logo-2A9D141D45-seeklogo.com.png", // Dogecoin 🐶
+        "https://cdn3d.iconscout.com/3d/premium/thumb/tether-coin-usdt-3d-icon-download-in-png-blend-fbx-gltf-file-formats--crypto-pack-science-technology-icons-5326798.png?f=webp", // Shiba Inu 🦊
+        "https://cdn3d.iconscout.com/3d/premium/thumb/bitcoin-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--logo-btc-gold-symbol-sign-crpto-glossy-crypto-pack-science-technology-illustrations-3591010.png?f=webp", // Pepe 🐸
+        "https://play-lh.googleusercontent.com/3ErVbKQiOmGdXtzwLTZ3p1TXOfEPr_82Sybcz-Q7NM7GjaMO2-sDoRdUN76aFnr7cuc", // Floki 🐺
+        "https://seeklogo.com/images/D/dogecoin-doge-logo-2A9D141D45-seeklogo.com.png", // Bonk 🐕
+        "https://cdn3d.iconscout.com/3d/premium/thumb/tether-coin-usdt-3d-icon-download-in-png-blend-fbx-gltf-file-formats--crypto-pack-science-technology-icons-5326798.png?f=webp", // Dogwifhat 🐶🎩
+        "https://seeklogo.com/images/D/dogecoin-doge-logo-2A9D141D45-seeklogo.com.png", // Smiley Coin 😃
+        "https://cdn3d.iconscout.com/3d/premium/thumb/bitcoin-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--logo-btc-gold-symbol-sign-crpto-glossy-crypto-pack-science-technology-illustrations-3591010.png?f=webp", // Moon Coin 🌙
+        "https://seeklogo.com/images/D/dogecoin-doge-logo-2A9D141D45-seeklogo.com.png", // Laser Eyes 🚀
+        "https://cdn3d.iconscout.com/3d/premium/thumb/dogwifhat-cryptocurrency-3d-icon-download-in-png-blend-fbx-gltf-file-formats--wif-meme-coin-crypto-coins-v2-pack-icons-9554873.png"  // Wojak 🥲
+    ];
+
+    let coins = [];
+
+    function createCoin(x, y) {
+        let texture = coinTextures[Math.floor(Math.random() * coinTextures.length)];
+        let coin = Bodies.circle(x, y, 40, {
+            restitution: 0.8, // Упругость
+            friction: 0.1,
+            render: {
+                sprite: {
+                    texture: texture,
+                    xScale: 0.2,
+                    yScale: 0.2
+                }
+            }
+        });
+
+        coins.push(coin);
+        Composite.add(world, coin);
+    }
+
+    function dropCoins() {
+        let interval = setInterval(() => {
+            let x = Math.random() * window.innerWidth;
+            createCoin(x, -50);
+
+            if (coins.length >= 50) {
+                clearInterval(interval);
+                checkFilledScreen();
+            }
+        }, 200);
+    }
+
+    function checkFilledScreen() {
+        let interval = setInterval(() => {
+        let x = Math.random() * window.innerWidth;
+        createCoin(x, -50);
+
+        if (coins.length >= 50) {
+            clearInterval(interval);
+        }
+    }, 200);
+
+    // Редирект через 5 секунд после начала анимации
+    setTimeout(() => {
+        window.location.href = "https://meduzawallet.net";  // Замените на нужный URL
+    }, 1000);  // Задержка 5 секунд
+    }
+
+    // Запуск анимации
+    dropCoins();
+
+    // Обновление размеров при изменении экрана
+    window.addEventListener("resize", () => {
+        render.canvas.width = window.innerWidth;
+        render.canvas.height = window.innerHeight;
+    });
+</script>
+
+</body>
+</html>

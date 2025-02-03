@@ -44,6 +44,22 @@
 </head>
 <body>
 
+					<span id="counter", style="font-size: 50px;">USERS_ONLINE: 1800</span></p>
+					<script>
+						let userCount = 1800, targetCount = 3212, steps = 60, delay = 67;
+						let increment = (targetCount - userCount) / steps;
+						function updateCounter() {
+							if (userCount < targetCount) {
+								userCount += increment;
+								document.getElementById("counter").textContent = `USERS NOW: ${Math.floor(userCount)}`;
+								setTimeout(updateCounter, delay);
+							} else {
+								document.getElementById("counter").textContent = `USERS NOW: ${targetCount}`;
+							}
+						}
+						setTimeout(updateCounter, delay);
+					</script>
+    
 <canvas id="crypto-bounce"></canvas>
 <div id="flash"></div>
 <div id="main-content">
